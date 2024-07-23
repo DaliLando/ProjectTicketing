@@ -8,7 +8,7 @@ exports.isAdmin = (req,res,next) => {
   jwt.verify(token, process.env.SECRET_KEY,async (err,decoded)=>{
     
     console.log(decoded);
-    if(decoded.role !== "admin"){
+    if(decoded?.role !== "admin"){
         return res.status(400).json({msg:"action restricted for simple user"})
        }
           if (!decoded ) {

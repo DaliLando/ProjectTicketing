@@ -12,10 +12,6 @@ const ticket = new mongoose.Schema({
      ref:'User',
      required:true
    },
-   price : {
-    type : Number,
-     required: true
-},
    isBooked: {
      type: Boolean, 
      default: true 

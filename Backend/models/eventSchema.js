@@ -5,9 +5,23 @@ const event = new mongoose.Schema({
     date: { type: Date, required: true },
     description: String,
     location : { type: String, required: true },
-    category : String,
-    ticketsAvailable: { type: Number, required: true },
-    isActive: { type: Boolean, default: true }
+    category : {type:String, enum:["sport","entertainement"]},
+    ticketsAvailable: 
+      [{
+         catType:{
+            type:String,
+            enum:["vip","seats","standing"]
+        },
+        quantity:{
+          type:Number,
+          required:true
+        },
+        price:{
+            type:Number
+        }
+         }],
+    isActive: { type: Boolean, default: true },
+    soldTickets : [{type: mongoose.Types.ObjectId, ref:"Ticket"}]
 
 })
 
