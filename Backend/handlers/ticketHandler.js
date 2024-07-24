@@ -11,27 +11,38 @@ exports.newTicket = async (req,res)=> {
    let nvTicket = new ticketSchema({event:id,user:user._id})
    
    let currentEvent = await eventSchema.findById(id)
-   
+  //  console.log(currentEvent.ticketsAvailable);
      let totalTickets = currentEvent.ticketsAvailable.reduce(
       (accumulator, currentValue) => accumulator + currentValue.quantity,
       0,
     );
      if (totalTickets===0){ 
-      await ticketSchema.findByIdAndUpdate(id,{isActive:false},{new:true})
+      await currentEvent.updateOne({$set:{isActive:false}})
   
      } else {
-      await nvTicket.save();
+      // await nvTicket.save();
 
-      let dec = await eventSchema.findOneAndUpdate({_id:id ,"ticketsAvailable.catType": type },
-        { $push: { soldTickets: nvTicket._id  },$inc: { "ticketsAvailable.$.quantity": -1 } },
-        {new:true})
+      //  currentEvent.ticketsAvailable.map(async(item)=>{
+        for ( let i=0;i<currentEvent.ticketsAvailable.length;i++) {
+          if(currentEvent.ticketsAvailable[i].quantity > 0 && currentEvent.ticketsAvailable[i].catType === type){
+           await  currentEvent.updateOne(
+            {"currentEvent.catType":type},
+              { $inc: { "ticketsAvailable.$.quantity": -1 } }
+              
+             )
+            return res.status(200).json({msg:"Ticket booked successfully",nvTicket}) 
+            
+          } else {
+            return res.status(400).json({msg:"wfeeeee"})
+          }
+        }
+        
       
-       res.status(200).json({msg:"Ticket booked successfully",nvTicket,dec}) 
+      //  })
+      
+      
      }
-    
-
-  
-
+     
   } catch (error) {
     console.log(error);
     res.status(500).json({msg:" Server error occured"})
