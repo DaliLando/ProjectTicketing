@@ -1,80 +1,154 @@
-const ticketSchema = require ("../models/ticketSchema")
-const eventSchema = require("../models/eventSchema")
+const ticketSchema = require("../models/ticketSchema");
+const eventSchema = require("../models/eventSchema");
+const { mailer } = require("./mailer");
 
-exports.newTicket = async (req,res)=> { 
-    let {price, type} = req.body;
-    let  user= req.user;
-    let {id}= req.params
-  // console.log(user);
+exports.newTicket = async (req, res) => {
+  const { valid, type } = req.body;
+  const user = req.user;
+  const { id } = req.params;
+
   try {
-   
-   let nvTicket = new ticketSchema({event:id,user:user._id})
-   
-   let currentEvent = await eventSchema.findById(id)
-  //  console.log(currentEvent.ticketsAvailable);
-     let totalTickets = currentEvent.ticketsAvailable.reduce(
-      (accumulator, currentValue) => accumulator + currentValue.quantity,
-      0,
+    const currentEvent = await eventSchema.findById(id);
+    if (!currentEvent) {
+      return res.status(400).json({ msg: "No event found with this ID" });
+    }
+
+    const totalTickets = currentEvent.ticketsAvailable.reduce(
+      (acc, ticket) => acc + ticket.quantity,
+      0
     );
-     if (totalTickets===0){ 
-      await currentEvent.updateOne({$set:{isActive:false}})
-  
-     } else {
-      // await nvTicket.save();
+    const nvTicket = new ticketSchema({ event: id, user: user._id });
+    if (totalTickets === 0) {
+      await currentEvent.updateOne({ isActive: false });
+      return res.status(400).json({ msg: "Ticket stock is empty now :(" });
+    }
 
-      //  currentEvent.ticketsAvailable.map(async(item)=>{
-        for ( let i=0;i<currentEvent.ticketsAvailable.length;i++) {
-          if(currentEvent.ticketsAvailable[i].quantity > 0 && currentEvent.ticketsAvailable[i].catType === type){
-           await  currentEvent.updateOne(
-            {"currentEvent.catType":type},
-              { $inc: { "ticketsAvailable.$.quantity": -1 } }
-              
-             )
-            return res.status(200).json({msg:"Ticket booked successfully",nvTicket}) 
-            
-          } else {
-            return res.status(400).json({msg:"wfeeeee"})
-          }
+    if (valid === true) {
+      const updateResult = await eventSchema.updateOne(
+        {
+          _id: id,
+          "ticketsAvailable.catType": type,
+          "ticketsAvailable.quantity": { $gt: 0 }
+        },
+        {
+          $inc: { "ticketsAvailable.$.quantity": -1 },
+          $push: { soldTickets: nvTicket._id }
         }
-        
-      
-      //  })
-      
-      
-     }
+      );
+
+      if (updateResult.modifiedCount === 0) {
+        return res.status(400).json({ msg: "Tickets are all sold" });
+      }
+
      
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({msg:" Server error occured"})
-  }
-}
+      await nvTicket.save();
+      res.status(200).json({ msg: "Ticket booked successfully", doc: updateResult });
+      const bought = `
+        <html>
+        <head>
+          <style>
+            .container {
+              font-family: Arial, sans-serif;
+              padding: 20px;
+              background-color: #f9f9f9;
+            }
+            .header {
+              background-color: #4CAF50;
+              color: white;
+              padding: 10px;
+              text-align: center;
+            }
+            .content {
+              margin: 20px 0;
+            }
+            .footer {
+              background-color: #4CAF50;
+              color: white;
+              padding: 10px;
+              text-align: center;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>Booking Confirmation</h1>
+            </div>
+            <div class="content">
+              <p>Hello ${user.firstName},</p>
+              <p>Thank you for your purchase. Here are the details of your ticket:</p>
+              <ul>
+                <li>Event: ${currentEvent.name}</li>
+                <li>Date: ${currentEvent.date}</li>
+              </ul>
+            </div>
+            <div class="footer">
+              <p>Thank you for choosing our service!</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
 
-exports.cancelTicket = async(req,res)=> {
-    let {id} = req.params;
-
-    try {
-       let result= await ticketSchema.findByIdAndUpdate(id,{isBooked:false},{new:true})
-       let inc = await eventSchema.findByIdAndUpdate(result.event,{$inc:{ticketsAvailable:1}},{new:true})
-       res.status(200).json({msg:"Ticket cancelled with success"},result,inc)
-    } catch (error) {
-        res.status(500).json({msg:" Server error occured"})
+      mailer(user.email,'Booking confirmation',bought)
+    } else {
+      return res.status(400).json({ msg: "Order not confirmed" });
     }
-}
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Server error occurred" });
+  }
+};
 
-exports.getTicket = async (req,res)=> {
-  let {id}=req.params;
+exports.cancelTicket = async (req, res) => {
+  const { id } = req.params;
+
   try {
-    let found = await ticketSchema.findById(id).populate("event").populate("user");
-
-    let {location} = found.event
-    console.log(location);
-    if (!found) {
-      return res.status (400).json({msg:"no ticket found with this id"})
+    const ticket = await ticketSchema.findByIdAndUpdate(id, { isBooked: false }, { new: true });
+    if (!ticket) {
+      return res.status(400).json({ msg: "No ticket found with this ID" });
     }
 
-    res.status(200).json({msg:"ticket found",location})
+    await eventSchema.findByIdAndUpdate(ticket.event, { $inc: { "ticketsAvailable.$.quantity": 1 } }, { new: true });
+
+    res.status(200).json({ msg: "Ticket cancelled successfully", ticket });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({msg:" Server error occured"})
+    console.error(error);
+    res.status(500).json({ msg: "Server error occurred" });
   }
-}
+};
+
+exports.getTicket = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const ticket = await ticketSchema.findById(id).populate("event").populate("user");
+
+    if (!ticket) {
+      return res.status(400).json({ msg: "No ticket found with this ID" });
+    }
+
+    const { location } = ticket.event;
+    res.status(200).json({ msg: "Ticket found", location });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Server error occurred" });
+  }
+};
+
+exports.getTicketsByUser = async (req, res) => {
+  const user = req.user;
+
+  try {
+    const tickets = await ticketSchema.find({ user: user._id }).populate("user");
+
+    if (tickets.length === 0) {
+      return res.status(400).json({ msg: "This user hasn't booked any tickets" });
+    }
+
+    res.status(200).json({ msg: "Tickets booked by user", tickets });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Server error occurred" });
+  }
+};

@@ -5,6 +5,7 @@ const eventRouter = require("./routes/eventRoute");
 const cors = require ("cors");
 const ticketRouter = require("./routes/ticketRoute");
 
+
 const app= express();
 
 require("dotenv").config();
@@ -12,6 +13,8 @@ require("dotenv").config();
 let port = process.env.PORT || 4000;
 
 connectDB();
+
+
 app.use(cors({origin:'http://localhost:3000'}))
 app.use(express.json())
 app.use("/auth",authRouter)
