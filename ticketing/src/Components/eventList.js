@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { fetchEvents } from '../API/eventAPI';
 import { Card, Col, Row } from 'react-bootstrap';
+import { fetchEvents } from '../API/eventApi';
 
 const EventList = ({ category }) => {
   const [events, setEvents] = useState([]);

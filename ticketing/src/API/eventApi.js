@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'YOUR_API_ENDPOINT/events'; // Replace with your API endpoint
+const API_URL = 'http://localhost:3000/event/getevents'; // Update this to your API endpoint
 
 export const fetchEvents = async () => {
   try {
