@@ -1,31 +1,47 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Col, Row } from 'react-bootstrap';
-import { fetchEvents } from '../API/eventApi';
+import axios from 'axios';
+import { Col, Card, Spinner, Alert } from 'react-bootstrap';
 
 const EventList = ({ category }) => {
   const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchEvents().then((data) => {
-      const filteredEvents = data.filter(event => event.category === category);
-      setEvents(filteredEvents);
-    });
+    const fetchEvents = async () => {
+      try {
+        const response = await axios.get(`/event/category/${category}`);
+        setEvents(response.data);
+      } catch (err) {
+        setError(err.message);
+      }
+      setLoading(false);
+    };
+
+    fetchEvents();
   }, [category]);
 
+  if (loading) return <Spinner animation="border" />;
+  if (error) return <Alert variant="danger">{error}</Alert>;
+
   return (
-    <Row>
-      {events.map(event => (
-        <Col key={event._id} md={4}>
-          <Card className="mb-3">
+    <div>
+      {events.length === 0 ? (
+        <Alert variant="info">No events found in this category.</Alert>
+      ) : (
+        events.map(event => (
+          <Card key={event._id} style={{ marginBottom: '10px' }}>
             <Card.Body>
-              <Card.Title>{event.name}</Card.Title>
-              <Card.Text>{event.date}</Card.Text>
+              <Card.Title>{event.title}</Card.Title>
+              <Card.Text>
+                {event.date} - {event.location}
+              </Card.Text>
               <Card.Text>{event.description}</Card.Text>
             </Card.Body>
           </Card>
-        </Col>
-      ))}
-    </Row>
+        ))
+      )}
+    </div>
   );
 };
 

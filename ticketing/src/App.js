@@ -4,6 +4,7 @@ import Home from './pages/home';
 import Login from "./pages/login";
 import Register from "./pages/register";
 import CustomNavbar from './Components/NavBar';
+import CategoryEvents from './pages/categories';
 
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/category/:category" component={CategoryEvents} />
       </Routes>
     </Router>
   );

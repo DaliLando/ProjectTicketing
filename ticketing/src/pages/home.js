@@ -1,3 +1,5 @@
+// ticketing/src/pages/home.js
+
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import EventList from '../Components/eventList';

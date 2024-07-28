@@ -20,6 +20,7 @@ exports.newEvent = async (req,res)=> {
        
     } catch (error) {
         res.status(500).json({msg:" Server error occured"})
+        console.log(error);
     }
 }
 
@@ -66,5 +67,14 @@ exports.getAllEvents = async (req, res) => {
       res.status(200).json(events);
     } catch (error) {
       res.status(500).json({ msg: "Server error occurred" });
+    }
+  };
+
+exports.findCategory = async (req, res) => {
+    try {
+      const events = await eventSchema.find({ category: req.params.category });
+      res.json(events);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
     }
   };
