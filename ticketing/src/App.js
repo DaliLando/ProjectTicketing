@@ -4,7 +4,10 @@ import Home from './pages/home';
 import Login from "./pages/login";
 import Register from "./pages/register";
 import CustomNavbar from './Components/NavBar';
-import CategoryEvents from './pages/categories';
+import EventList from './Components/eventList';
+import UserRoute from './protectedRoute/userRoute';
+import AdminRoute from './protectedRoute/adminRoute';
+import AdminDash from './pages/adminDash';
 
 
 function App() {
@@ -15,7 +18,16 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/category/:category" component={CategoryEvents} />
+        
+        <Route element={<UserRoute/>}>
+        <Route path="/category/:category" element={<EventList/>} />
+        </Route>
+
+
+        <Route element={<AdminRoute/>}>
+        <Route path='/admin' element={<AdminDash/>}/>
+
+        </Route>
       </Routes>
     </Router>
   );

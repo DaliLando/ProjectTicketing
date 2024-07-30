@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { signIn } from '../API/authAPI';
 import { Form, Button, Container, Row, Col, Card } from 'react-bootstrap';
+import {getLocalStorage, setLocalStorage } from '../helpers/localStorage';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [credentials, setCredentials] = useState({
@@ -8,15 +10,28 @@ const Login = () => {
     password: ''
   });
 
+  const navigate = useNavigate();
   const handleChange = (e) => {
     setCredentials({ ...credentials, [e.target.name]: e.target.value });
   };
 
+ 
+  
   const handleClick = (e) => {
     e.preventDefault();
     signIn(credentials)
       .then((doc) => {
-        console.log(doc);
+        // console.log(doc);
+        setLocalStorage(doc.token , doc.doesExist);
+
+        const user = getLocalStorage("user");
+        if(user.role ==="user"){
+          navigate('/')
+        }
+        if(user.role === "admin"){
+          navigate('/admin')
+        }
+       
       })
       .catch((err) => {
         console.error(err);

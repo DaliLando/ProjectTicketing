@@ -1,8 +1,10 @@
-/* ticketing/src/styles.css */
+body{
+  background-image: url(../public/backgroundall.jpg);
+}
 
-.event-card {
+/* .event-card {
     border: 1px solid #ddd;
     padding: 20px;
-    margin: 10px 0;
-  }
+    margin: 100px;
+  } */
   

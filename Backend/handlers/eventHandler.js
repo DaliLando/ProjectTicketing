@@ -72,8 +72,8 @@ exports.getAllEvents = async (req, res) => {
 
 exports.findCategory = async (req, res) => {
     try {
-      const events = await eventSchema.find({ category: req.params.category });
-      res.json(events);
+      const evenements = await eventSchema.find({ category: req.params.category });
+      res.status(200).json({msg:"events available for this category:",evenements});
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
