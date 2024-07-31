@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Col, Card, Spinner, Alert, Button } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
+import EventCard from './card';
 
 const EventList = () => {
   const [events, setEvents] = useState([]);
@@ -32,22 +33,11 @@ const EventList = () => {
       {events.length === 0 ? (
         <Alert variant="info">No events found in this category.</Alert>
       ) : (
-        events.map((item) => (
-          <Card key={item._id} style={{ margin: '20px',width:"300px" }}>
-            <Card.Body>
-              <Card.Title>{item.name}</Card.Title>
-              <Card.Text>
-                Date : {item.date}  
-              </Card.Text>
-              <Card.Text>
-              Location : {item.location}
-              </Card.Text>
-              <Card.Text>{item.description}</Card.Text>
-              <Button variant="success">Buy now</Button>{' '}
+        events.map((item,index) => {
+          return <EventCard event={item} key={index}/>
 
-            </Card.Body>
-          </Card>
-        ))
+        }
+        )
       )}
     </div>
   );

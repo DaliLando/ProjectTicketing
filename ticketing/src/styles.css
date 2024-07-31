@@ -1,5 +1,6 @@
 body{
   background-image: url(../public/backgroundall.jpg);
+  background-attachment: fixed;
 }
 
 /* .event-card {

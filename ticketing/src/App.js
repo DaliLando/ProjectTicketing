@@ -26,7 +26,7 @@ function App() {
 
         <Route element={<AdminRoute/>}>
         <Route path='/admin' element={<AdminDash/>}/>
-
+        
         </Route>
       </Routes>
     </Router>

@@ -78,3 +78,14 @@ exports.findCategory = async (req, res) => {
       res.status(500).json({ message: err.message });
     }
   };
+
+  exports.expireEvent = async (req,res) => {
+    
+    await eventSchema.updateMany({isActive:false})
+    .then((doc)=> {
+      return res.status(200).json({msg:"event(s) updated successfully",doc})
+    })
+    .catch((err)=>{
+      console.error(err);
+    })
+  }
