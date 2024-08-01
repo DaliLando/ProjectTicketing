@@ -8,11 +8,13 @@ import EventList from './Components/eventList';
 import UserRoute from './protectedRoute/userRoute';
 import AdminRoute from './protectedRoute/adminRoute';
 import AdminDash from './pages/adminDash';
+import NewEvent from './Components/newEvent';
+import UpdateEvent from './Components/updateEvent';
 
 
 function App() {
   return (
-    <Router>
+    <div>
       <CustomNavbar />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -26,10 +28,11 @@ function App() {
 
         <Route element={<AdminRoute/>}>
         <Route path='/admin' element={<AdminDash/>}/>
-        
+        <Route path="/update/:id" element={<UpdateEvent/>}/>
         </Route>
       </Routes>
-    </Router>
+      </div>
+   
   );
 };
 

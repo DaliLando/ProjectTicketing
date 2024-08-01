@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Col, Card, Spinner, Alert, Button } from 'react-bootstrap';
+import {  Spinner, Alert } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import EventCard from './card';
 

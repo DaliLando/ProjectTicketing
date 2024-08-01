@@ -10,4 +10,5 @@ eventRouter.delete('/delete/:id',isAdmin,deleteEvent)
 eventRouter.get('/getevents',isAdmin,getAllEvents)
 eventRouter.get('/category/:category',findCategory)
 
+
 module.exports = eventRouter

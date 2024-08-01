@@ -12,7 +12,7 @@ const UserRoute =()=>{
     }else{
         removeLocalStorage('user')
         removeLocalStorage('token')
-       return  <Navigate to="/login"/>
+       return  <Navigate to="/login" replace/>
     }
 
 }

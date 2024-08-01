@@ -3,6 +3,7 @@ const eventSchema = require ("../models/eventSchema")
 exports.newEvent = async (req,res)=> {
     let {name,date,description,location,category,ticketsAvailable}=req.body
 
+    console.log(req.body);
     try {
        if (!name || !date || !description || !location|| !category||!ticketsAvailable) {
         return res.status(400).json({msg:" All event fields are required"})
