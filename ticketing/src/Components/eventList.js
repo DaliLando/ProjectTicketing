@@ -23,6 +23,8 @@ const EventList = () => {
 
     fetchEvents();
   }, [category]);
+
+ 
   console.log(events);
 
   if (loading) return <Spinner animation="border" />;

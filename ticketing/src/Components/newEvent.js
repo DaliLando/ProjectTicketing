@@ -48,7 +48,7 @@ const NewEvent = ({ handleClose, show }) => {
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton>
-        <Modal.Title>Modal heading</Modal.Title>
+        <Modal.Title>Create a new event</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form>

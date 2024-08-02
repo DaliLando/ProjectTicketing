@@ -50,6 +50,7 @@ if (!search) {
 exports.deleteEvent=async (req,res) => {
 
 let {id}= req.params;
+
 let search = await eventSchema.findById(id)
 if (!search) {
  return   res.status(400).json({msg:"event doesn't exist"})

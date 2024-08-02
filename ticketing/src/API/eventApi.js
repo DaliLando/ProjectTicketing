@@ -29,6 +29,12 @@ export const sendEvent = async (values)=> {
 
 export const editEvent = async (values,id)=> {
  let token = getLocalStorage("token")
- let {data}= await axios.put(process.env.REACT_APP_URI+ `/update/${id}`,values,{headers:{"Authorization":token}})
+ let {data}= await axios.put(process.env.REACT_APP_URI+`/event/update/${id}`,values,{headers:{"Authorization":token}})
  return data
+}
+
+export const deleteEvent = async (id)=> { 
+  let token = getLocalStorage("token")
+  let {data}= await axios.delete(process.env.REACT_APP_URI+`/event/delete/${id}`,{headers:{"Authorization":token}})
+  return data
 }
