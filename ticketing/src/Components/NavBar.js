@@ -61,7 +61,7 @@ const publicNav =()=>{
         </Dropdown.Toggle>
 
         <Dropdown.Menu >
-          <Dropdown.Item href="#/action-1" active>
+          <Dropdown.Item as={Link} to="/profile" active>
             profile
           </Dropdown.Item>
           <Dropdown.Item href="#/action-2">Tickets</Dropdown.Item>

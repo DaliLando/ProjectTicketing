@@ -1,11 +1,20 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Button, Card,CloseButton } from 'react-bootstrap'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { deleteEvent } from '../API/eventApi'
 import { getLocalStorage } from '../helpers/localStorage'
+import { useDispatch, useSelector } from 'react-redux'
+import { setEvents } from '../app/eventSlice'
+import BuyTicket from './buyTicket'
 
 const EventCard=({event}) => {
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+   const data = useSelector((state)=>state.Event.event);
     const location = useLocation()
+    const dispatch = useDispatch()
     // console.log(location);
     const navigate = useNavigate();
   
@@ -16,12 +25,20 @@ const EventCard=({event}) => {
       navigate(`/update/${event._id}`)
     }
 
+    const buyTicket =()=>{
+      handleShow()
+     
+      
+      
+    }
+
    
     const suppEvent =()=> {
     
       deleteEvent(event._id)
       .then((doc)=>{
         console.log(doc);
+        dispatch(setEvents(data.filter((item)=>item._id !== event._id)))
       })
       .catch((err)=>{
         console.error(err);
@@ -50,7 +67,7 @@ const EventCard=({event}) => {
               })}
               </Card.Text> */}
               <Card.Text>{event.description}</Card.Text>
-              {location.pathname === "/admin" ? <Button variant="success" onClick={handleClick}>edit</Button> :  <Button variant="success">Buy Now</Button> }
+          <Button variant="success" onClick={handleClick}>edit</Button>
              
 
             </Card.Body>
@@ -78,7 +95,7 @@ const EventCard=({event}) => {
               })}
               </Card.Text> */}
               <Card.Text>{event.description}</Card.Text>
-                <Button variant="success">Buy Now</Button> 
+                <Button variant="success" onClick={buyTicket}>Buy Now</Button> 
              
 
             </Card.Body>
@@ -88,6 +105,7 @@ const EventCard=({event}) => {
   return (
     <div>
        {token && user?.role === "user" ? cardForUser() : cardForAdmin()}
+       {show && <BuyTicket handleClose={handleClose} show={show} id={event._id} event={event}/>}
     </div>
   )
 }

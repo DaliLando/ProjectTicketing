@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
 import { sendEvent } from '../API/eventApi';
+import { useDispatch } from 'react-redux';
+import { createEvent, setEvents } from '../app/eventSlice';
 
 const NewEvent = ({ handleClose, show }) => {
   const [event, setEvent] = useState({
@@ -11,7 +13,8 @@ const NewEvent = ({ handleClose, show }) => {
     category: '',
     ticketsAvailable: [{ catType: '', quantity: '', price: '' }],
   });
-
+   
+  const dispatch = useDispatch();
   const handleChange = (e) => {
     setEvent({ ...event, [e.target.name]: e.target.value });
   };
@@ -39,6 +42,7 @@ const NewEvent = ({ handleClose, show }) => {
     sendEvent(event)
       .then((doc) => {
         console.log(doc);
+        dispatch(createEvent(event))
       })
       .catch((err) => {
         console.error(err);

@@ -3,14 +3,18 @@ import { getAllEvents } from '../API/eventApi';
 import { Alert, Button, Spinner } from 'react-bootstrap';
 import EventCard from '../Components/card';
 import NewEvent from '../Components/newEvent';
+import { useDispatch, useSelector } from 'react-redux';
+import { setEvents } from '../app/eventSlice';
 
 const AdminDash = () => {
 
-  const [events,setEvents]= useState([]);
+  // const [events,setEvents]= useState([]);
+
+  const {event} = useSelector((state)=>state.Event)
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [show, setShow] = useState(false);
-
+  const dispatch = useDispatch();
 
   
   const handleClose = () => setShow(false);
@@ -18,7 +22,7 @@ const AdminDash = () => {
   useEffect(()=>{
     getAllEvents()
     .then((doc)=> {
-      setEvents(doc)
+      dispatch(setEvents(doc))
       setLoading(false)
     })
     .catch((err)=> {
@@ -32,7 +36,7 @@ const AdminDash = () => {
   return (
     <div>
     <div style={{display:"flex",flexWrap:"wrap",justifyContent:"space-around"}}>
-      {events.map((item,index)=>{
+      {event.map((item,index)=>{
         return <EventCard event={item} key={index}/>
       })}
     </div>

@@ -10,6 +10,8 @@ import AdminRoute from './protectedRoute/adminRoute';
 import AdminDash from './pages/adminDash';
 import NewEvent from './Components/newEvent';
 import UpdateEvent from './Components/updateEvent';
+import UserProfile from './pages/userProfile';
+import PopUp from './Components/popUp';
 
 
 function App() {
@@ -23,6 +25,8 @@ function App() {
         
         <Route element={<UserRoute/>}>
         <Route path="/category/:category" element={<EventList/>} />
+        <Route path="/profile" element={<UserProfile/>}/>
+        <Route path="/cancel/:id" element={<PopUp/>}/>
         </Route>
 
 

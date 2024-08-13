@@ -4,8 +4,9 @@ const User = require ("../models/userSchema")
 exports.isAuth = (req,res,next) => {
 
     let token = req.header('Authorization');
-
-  jwt.verify(token, process.env.SECRET_KEY,async (err,decoded)=>{
+    //  console.log(token);
+     
+    jwt.verify(token, process.env.SECRET_KEY,async (err,decoded)=>{
            if (!decoded) {
             return res.status(400).json({msg:"Actions not allowed"})
            } else if(decoded.role !== "user"){

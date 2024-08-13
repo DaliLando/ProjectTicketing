@@ -3,7 +3,7 @@ const eventSchema = require("../models/eventSchema");
 const { mailer } = require("./mailer");
 
 exports.newTicket = async (req, res) => {
-  const { valid, type } = req.body;
+  const { valid, valeur } = req.body;
   const user = req.user;
   const { id } = req.params;
 
@@ -17,7 +17,7 @@ exports.newTicket = async (req, res) => {
       (acc, ticket) => acc + ticket.quantity,
       0
     );
-    const nvTicket = new ticketSchema({ event: id, user: user._id });
+    const nvTicket = new ticketSchema({ event: id, user: user._id,seatType:valeur });
     if (totalTickets === 0) {
       await currentEvent.updateOne({ isActive: false });
       return res.status(400).json({ msg: "Ticket stock is empty now :(" });
@@ -27,7 +27,7 @@ exports.newTicket = async (req, res) => {
       const updateResult = await eventSchema.updateOne(
         {
           _id: id,
-          "ticketsAvailable.catType": type,
+          "ticketsAvailable.catType": valeur,
           "ticketsAvailable.quantity": { $gt: 0 }
         },
         {
@@ -80,6 +80,7 @@ exports.newTicket = async (req, res) => {
               <ul>
                 <li>Event: ${currentEvent.name}</li>
                 <li>Date: ${currentEvent.date}</li>
+                <li> Seat type: ${valeur}</li>
               </ul>
             </div>
             <div class="footer">
@@ -102,6 +103,7 @@ exports.newTicket = async (req, res) => {
 
 exports.cancelTicket = async (req, res) => {
   const { id } = req.params;
+console.log(id);
 
   try {
     const ticket = await ticketSchema.findByIdAndUpdate(id, { isBooked: false }, { new: true });
@@ -109,7 +111,7 @@ exports.cancelTicket = async (req, res) => {
       return res.status(400).json({ msg: "No ticket found with this ID" });
     }
 
-    await eventSchema.findByIdAndUpdate(ticket.event, { $inc: { "ticketsAvailable.$.quantity": 1 } }, { new: true });
+    // await eventSchema.findByIdAndUpdate(ticket.event, { $inc: { "ticketsAvailable.$.quantity": 1 } }, { new: true });
 
     res.status(200).json({ msg: "Ticket cancelled successfully", ticket });
   } catch (error) {
@@ -140,7 +142,7 @@ exports.getTicketsByUser = async (req, res) => {
   const user = req.user;
 
   try {
-    const tickets = await ticketSchema.find({ user: user._id }).populate("user");
+    const tickets = await ticketSchema.find({ user: user._id }).populate("user").populate("event");
 
     if (tickets.length === 0) {
       return res.status(400).json({ msg: "This user hasn't booked any tickets" });

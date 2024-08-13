@@ -1,4 +1,5 @@
 const eventSchema = require ("../models/eventSchema")
+const ticketSchema = require ("../models/ticketSchema")
 
 exports.newEvent = async (req,res)=> {
     let {name,date,description,location,category,ticketsAvailable}=req.body
@@ -56,8 +57,10 @@ if (!search) {
  return   res.status(400).json({msg:"event doesn't exist"})
 }
 await eventSchema.findByIdAndDelete({_id:id})
-.then(()=>{
-    res.status(200).json({msg:"Event deleted successfully"})
+.then(async()=>{
+await ticketSchema.deleteMany({event:id})
+
+  res.status(200).json({msg:"Event deleted successfully"})
 })
 .catch((err)=>{
     res.status(500).json({msg:"server error"})

@@ -15,7 +15,8 @@ const ticket = new mongoose.Schema({
    isBooked: {
      type: Boolean, 
      default: true 
-    }
+    },
+    seatType : String
     
 });
 module.exports = mongoose.model('Ticket', ticket);

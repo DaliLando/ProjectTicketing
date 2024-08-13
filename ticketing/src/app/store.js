@@ -1,11 +1,12 @@
 
 
-import {configureStore} from "@";
+import {configureStore} from "@reduxjs/toolkit";
+import eventSlice from "./eventSlice";
 
 
 export default configureStore({
 
     reducer:{
-        "Event" : "esm slice"
+        "Event" : eventSlice
     }
 })
