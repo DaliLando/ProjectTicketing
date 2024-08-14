@@ -61,11 +61,10 @@ const publicNav =()=>{
         </Dropdown.Toggle>
 
         <Dropdown.Menu >
-          <Dropdown.Item as={Link} to="/profile" active>
+          <Dropdown.Item as={Link} to="/profile">
             profile
           </Dropdown.Item>
           <Dropdown.Item href="#/action-2">Tickets</Dropdown.Item>
-          <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
           <Dropdown.Divider />
           <Dropdown.Item onClick={()=>handelLogout()}>LogOut</Dropdown.Item>
         </Dropdown.Menu>
@@ -90,11 +89,9 @@ const publicNav =()=>{
         </Dropdown.Toggle>
 
         <Dropdown.Menu >
-        <Dropdown.Item href="#/action-1" active>
-            profile
-        </Dropdown.Item>
-        <Dropdown.Item href="#/action-2">Stats</Dropdown.Item>
-        <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
+        <Dropdown.Item as={Link} to="/admin">Dash</Dropdown.Item>
+        <Dropdown.Item as={Link} to="/stats">Stats</Dropdown.Item>
+        
         <Dropdown.Divider />
         <Dropdown.Item onClick={()=>handelLogout()}>LogOut</Dropdown.Item>
         </Dropdown.Menu>

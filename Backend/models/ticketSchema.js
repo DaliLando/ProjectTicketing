@@ -18,5 +18,6 @@ const ticket = new mongoose.Schema({
     },
     seatType : String
     
+    
 });
 module.exports = mongoose.model('Ticket', ticket);

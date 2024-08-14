@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route,Routes } from 'react-router-dom';
+import { Route,Routes } from 'react-router-dom';
 import Home from './pages/home';
 import Login from "./pages/login";
 import Register from "./pages/register";
@@ -8,10 +8,10 @@ import EventList from './Components/eventList';
 import UserRoute from './protectedRoute/userRoute';
 import AdminRoute from './protectedRoute/adminRoute';
 import AdminDash from './pages/adminDash';
-import NewEvent from './Components/newEvent';
 import UpdateEvent from './Components/updateEvent';
 import UserProfile from './pages/userProfile';
 import PopUp from './Components/popUp';
+import AdminStats from './pages/adminStats';
 
 
 function App() {
@@ -33,6 +33,7 @@ function App() {
         <Route element={<AdminRoute/>}>
         <Route path='/admin' element={<AdminDash/>}/>
         <Route path="/update/:id" element={<UpdateEvent/>}/>
+        <Route path='/stats' element={<AdminStats/>}/>
         </Route>
       </Routes>
       </div>

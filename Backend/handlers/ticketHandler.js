@@ -17,7 +17,12 @@ exports.newTicket = async (req, res) => {
       (acc, ticket) => acc + ticket.quantity,
       0
     );
+
+   
+    
     const nvTicket = new ticketSchema({ event: id, user: user._id,seatType:valeur });
+    // console.log(nvTicket);
+    
     if (totalTickets === 0) {
       await currentEvent.updateOne({ isActive: false });
       return res.status(400).json({ msg: "Ticket stock is empty now :(" });
@@ -28,13 +33,17 @@ exports.newTicket = async (req, res) => {
         {
           _id: id,
           "ticketsAvailable.catType": valeur,
-          "ticketsAvailable.quantity": { $gt: 0 }
+          "ticketsAvailable.quantity": { $gt: 0 },
+         
         },
         {
-          $inc: { "ticketsAvailable.$.quantity": -1 },
-          $push: { soldTickets: nvTicket._id }
+          $inc: { "ticketsAvailable.$.quantity": -1 ,"nbrSold.$.quantity":1 },
+          $push: { soldTickets: nvTicket._id },
+          $set:{"nbrSold.$.seatType":valeur}
+          
         }
       );
+console.log(updateResult);
 
       if (updateResult.modifiedCount === 0) {
         return res.status(400).json({ msg: "Tickets are all sold" });
@@ -112,6 +121,8 @@ console.log(id);
     }
 
     // await eventSchema.findByIdAndUpdate(ticket.event, { $inc: { "ticketsAvailable.$.quantity": 1 } }, { new: true });
+    // update soldTickets
+
 
     res.status(200).json({ msg: "Ticket cancelled successfully", ticket });
   } catch (error) {

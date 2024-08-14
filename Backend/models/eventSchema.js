@@ -21,7 +21,17 @@ const event = new mongoose.Schema({
         }
          }],
     isActive: { type: Boolean, default: true },
-    soldTickets : [{type: mongoose.Types.ObjectId, ref:"Ticket"}]
+    soldTickets : [{type: mongoose.Types.ObjectId, ref:"Ticket"}],
+    nbrSold:[{
+      seatType:{
+         type:String,
+         enum:["vip","seats","standing"]
+     },
+     quantity:{
+       type:Number,
+       required:true
+     }
+      }]
 
 })
 

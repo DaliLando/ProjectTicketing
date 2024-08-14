@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { getTicket } from '../API/ticketAPI';
 import { Alert, Button, Card, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import QRCode from "react-qr-code";
 
 
 const UserProfile = () => {
@@ -29,6 +30,8 @@ const UserProfile = () => {
           setLoading(false)
         })
         .catch((err)=> {
+          console.log(err);
+          
           setError(err)
           
         })
@@ -41,12 +44,22 @@ const UserProfile = () => {
     <div style={{display:"flex",flexWrap:"wrap",justifyContent:"space-evenly"}}>
      {tickets.map((item,index)=> {
         let prix = item.event.ticketsAvailable.find((el)=>el.catType === item?.seatType)
-      
+         let qrValue ={
+          ID: item._id ,
+          user : item.user.email,
+          event: item.event.name,
+          seat : item?.seatType,
+          date:item.event.date,
+          location:item.event.location
+         }
         
         return <div style={{margin:"30px"}}>
         
         <Card key={index} style={{width:'300px',}}>
             <Card.Header>{item.event.name}</Card.Header>
+            <div style={{ background: 'white', padding: '16px' }}>
+  <QRCode value={JSON.stringify(qrValue)}/>
+</div>
         <Card.Body>
         
         
