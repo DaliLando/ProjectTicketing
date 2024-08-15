@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from 'react-bootstrap';
 import Modal from 'react-bootstrap/Modal';
 import { useNavigate, useParams } from 'react-router-dom';
-import { cancelTicket } from '../API/ticketAPI';
+import { cancelTicket, findTicket } from '../API/ticketAPI';
 const PopUp = () => {
   const [show, setShow] = useState(false);
   const [isBooked , setBooked] = useState(false);
@@ -15,9 +15,22 @@ const PopUp = () => {
     navigate("/profile")
   }
 
+const [valeur,setValeur]= useState("")
+
+  useEffect(()=>{
+    findTicket(id)
+    .then((doc)=> {
+setValeur(doc.seatType);
+    })
+    .catch((err)=> {
+      console.log(err);
+            
+    })
+  },[])
+
 
   const wrapperClick = ()=> {
-    cancelTicket(isBooked ,id)
+    cancelTicket({isBooked :isBooked ,valeur : valeur} ,id)
     .then((doc)=>{
         console.log(doc) 
         handleClose ()  
