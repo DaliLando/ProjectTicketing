@@ -33,11 +33,14 @@ exports.newTicket = async (req, res) => {
       const updateResult = await eventSchema.updateOne(
         { "ticketsAvailable": { "$elemMatch": { "catType": valeur, "quantity":{$gt :0} } }, _id :id },
         {
-          $inc: { "ticketsAvailable.$.quantity": -1,"nbrSold.$.quantity":1 },
+          $inc: { "ticketsAvailable.$.quantity": -1,"nbrSold.$[elem].quantity":1 },
           $push: { soldTickets: nvTicket._id },
           // $set:{"nbrSold.$.seatType":valeur}
+
           
         }
+        ,
+          {arrayFilters:  [{ "elem.seatType": valeur}] }
       );
 
 
@@ -120,11 +123,12 @@ console.log(id);
     await eventSchema.updateOne(
       { "ticketsAvailable": { "$elemMatch": { "catType": valeur, "quantity":{$gt :0} } }, _id :ticket.event },
       {
-        $inc: { "ticketsAvailable.$.quantity": 1,"nbrSold.$.quantity":-1 },
+        $inc: { "ticketsAvailable.$.quantity": 1,"nbrSold.$[elem].quantity":-1 },
         $pull: { soldTickets: id },
         // $set:{"nbrSold.$.seatType":valeur}
         
-      }
+      },
+      {arrayFilters:  [{ "elem.seatType": valeur}] }
     )
 
 

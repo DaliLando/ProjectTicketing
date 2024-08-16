@@ -21,6 +21,8 @@ export const getAllEvents = async ()=> {
   return data;
 }
 
+
+
 export const sendEvent = async (values)=> {
   let token = getLocalStorage("token")
   let {data}= await axios.post(process.env.REACT_APP_URI+"/event/newevent",values,{headers:{"Authorization":token}})
@@ -36,5 +38,12 @@ export const editEvent = async (values,id)=> {
 export const deleteEvent = async (id)=> { 
   let token = getLocalStorage("token")
   let {data}= await axios.delete(process.env.REACT_APP_URI+`/event/delete/${id}`,{headers:{"Authorization":token}})
+  return data
+}
+
+
+export const findEvent = async (id)=> {
+  let token = getLocalStorage("token")
+  let {data}= await axios.get(process.env.REACT_APP_URI+`/event/findevent/${id}`,{headers:{"Authorization":token}})
   return data
 }

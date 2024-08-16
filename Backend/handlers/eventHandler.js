@@ -94,3 +94,15 @@ exports.findCategory = async (req, res) => {
       console.error(err);
     })
   }
+
+  exports.findEvent = async (req,res)=> {
+    let {id}=req.params
+    await eventSchema.findById(id)
+    .then ((doc)=>{
+      return res.status(200).json({msg:"event fetched",doc})
+    })
+    .catch ((err)=>{
+      console.error(err);
+      
+    })
+  }

@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
-import { editEvent } from '../API/eventApi';
+import { editEvent, findEvent } from '../API/eventApi';
 
 
 const UpdateEvent = () => {
@@ -21,7 +21,22 @@ const UpdateEvent = () => {
       const navigate = useNavigate();
  
   const [show,setShow] = useState(true);
+  const[data,setData]=useState({})
 
+  useEffect(()=>{
+    findEvent(id)
+    .then((result)=>{
+      setData(result.doc);
+
+        
+    })
+    .catch((err)=>{
+        console.log(err);
+
+    })
+},[])
+  console.log(data);
+  
 
   const handleClose = ()=>{
 
@@ -75,6 +90,7 @@ const UpdateEvent = () => {
                 placeholder="Enter date"
                 min={minDate}
                 onChange={handleChange}
+                value={data.date ? data?.date.slice(0,10) : "2024/07/11"}
               />
             </Form.Group>
           </Row>
@@ -87,6 +103,7 @@ const UpdateEvent = () => {
               name="location"
               placeholder="Enter event location"
               onChange={handleChange}
+              defaultValue={data?.location}
             />
           </Form.Group>
           {event.ticketsAvailable.map((item, index) => (
@@ -129,9 +146,9 @@ const UpdateEvent = () => {
               </Form.Group>
             </Row>
           ))}
-          <Button variant="secondary" onClick={addTicket}>
+          {event.ticketsAvailable.length <3 && <Button variant="secondary" onClick={addTicket}>
             Add Ticket Category
-          </Button>
+          </Button>}
         </Form>
       </Modal.Body>
       <Modal.Footer>

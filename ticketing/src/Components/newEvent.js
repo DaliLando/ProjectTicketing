@@ -150,9 +150,9 @@ const NewEvent = ({ handleClose, show }) => {
             </Row>
           ))}
 
-          <Button variant="secondary" onClick={addTicket}>
+          {event.ticketsAvailable.length <3 && <Button variant="secondary" onClick={addTicket}>
             Add Ticket Category
-          </Button>
+          </Button>}
         </Form>
       </Modal.Body>
       <Modal.Footer>

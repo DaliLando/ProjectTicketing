@@ -23,6 +23,7 @@ const EventCard=({event}) => {
     const handleClick =()=>{
 
       navigate(`/update/${event._id}`)
+      
     }
 
     const buyTicket =()=>{
@@ -56,7 +57,7 @@ const EventCard=({event}) => {
               <Card.Title>{event.name}</Card.Title>
 
               <Card.Text>
-                Date : {event.date}  
+                Date : {event.date.slice(0,10)}  
               </Card.Text>
               <Card.Text>
               Location : {event.location}
@@ -84,7 +85,7 @@ const EventCard=({event}) => {
               <Card.Title>{event.name}</Card.Title>
 
               <Card.Text>
-                Date : {event.date}  
+                Date : {event.date.slice(0,10)}  
               </Card.Text>
               <Card.Text>
               Location : {event.location}

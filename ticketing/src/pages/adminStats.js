@@ -60,7 +60,7 @@ const AdminStats = () => {
                     <div>
                       Tickets Sold: <Badge bg="primary">{el.quantity}</Badge>
                       <br />
-                      Tickets remaining: <Badge bg="success">{item.ticketsAvailable[indice].quantity}</Badge>
+                      Tickets remaining: <Badge bg="success">{item.ticketsAvailable.find((elem)=>elem.catType === el.seatType).quantity}</Badge>
                     </div>
                   </ListGroup.Item>
                 ))}
