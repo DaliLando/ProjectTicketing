@@ -48,7 +48,7 @@ const publicNav =()=>{
   const navForUser =()=>{
     return( <Navbar className="bg-dark">
       <Container>
-        <Navbar.Brand as={Link} to="/" style={{color:"white" , fontFamily:"Playfair Display",fontWeight:"bold"}}>
+        <Navbar.Brand as={Link} to="/" style={{color:"white" }}>
           Kosli maak
         </Navbar.Brand>
         <Navbar.Toggle />
@@ -77,7 +77,7 @@ const publicNav =()=>{
   const navForAdmin =()=>{
     return( <Navbar className="bg-dark">
       <Container>
-        <Navbar.Brand style={{color:"white" , fontFamily:"Playfair Display" , fontWeight:"bold"}}>
+        <Navbar.Brand as={Link} to="/admin"style={{color:"white"}}>
           Kosli maak
         </Navbar.Brand>
         <Navbar.Toggle />

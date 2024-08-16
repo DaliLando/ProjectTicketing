@@ -8,4 +8,26 @@ body{
     padding: 20px;
     margin: 100px;
   } */
-  
+  /* styles.css */
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  /* or 'Poppins', sans-serif; */
+  background-color: #f8f9fa; /* Light background for better contrast */
+  color: #212529; /* Dark text color for readability */
+}
+
+h3 {
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.card {
+  font-family: 'Montserrat', sans-serif;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
