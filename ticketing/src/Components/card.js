@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Card,CloseButton } from 'react-bootstrap'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { deleteEvent } from '../API/eventApi'
@@ -9,6 +9,7 @@ import BuyTicket from './buyTicket'
 
 const EventCard=({event}) => {
   const [show, setShow] = useState(false);
+  const[ticketCount,setTicketCount]=useState(0)
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -25,14 +26,25 @@ const EventCard=({event}) => {
       navigate(`/update/${event._id}`)
       
     }
-
-    const buyTicket =()=>{
-      handleShow()
-     
       
+      useEffect(()=>{
+        let user = getLocalStorage("user")
+        let initialCount = event.soldTickets.filter((item)=>item.user === user._id).length  
+        setTicketCount(initialCount)
+
+      },[event])
+
+    // console.log(ticketCount);
+    
+    
+    const buyTicket =()=>{
+        
+     
+        handleShow()
       
     }
 
+  
    
     const suppEvent =()=> {
     
@@ -62,11 +74,6 @@ const EventCard=({event}) => {
               <Card.Text>
               Location : {event.location}
               </Card.Text>
-              {/* <Card.Text>
-              Location : {event.ticketsAvailable.map((item)=>{
-                return item
-              })}
-              </Card.Text> */}
               <Card.Text>{event.description}</Card.Text>
           <Button variant="success" onClick={handleClick}>edit</Button>
              
@@ -87,17 +94,16 @@ const EventCard=({event}) => {
               <Card.Text>
                 Date : {event.date.slice(0,10)}  
               </Card.Text>
+
               <Card.Text>
               Location : {event.location}
               </Card.Text>
-              {/* <Card.Text>
-              Location : {event.ticketsAvailable.map((item)=>{
-                return item
-              })}
-              </Card.Text> */}
-              <Card.Text>{event.description}</Card.Text>
-                <Button variant="success" onClick={buyTicket}>Buy Now</Button> 
-             
+
+              <Card.Text>
+                Description : {event.description}
+              </Card.Text>
+
+              {ticketCount<3 ? <Button variant="success" onClick={buyTicket}>Buy Now</Button> :null}
 
             </Card.Body>
           </Card>
@@ -106,7 +112,7 @@ const EventCard=({event}) => {
   return (
     <div>
        {token && user?.role === "user" ? cardForUser() : cardForAdmin()}
-       {show && <BuyTicket handleClose={handleClose} show={show} id={event._id} event={event}/>}
+       {show && <BuyTicket handleClose={handleClose} show={show} id={event._id} event={event} setTicketCount ={setTicketCount}/>}
     </div>
   )
 }

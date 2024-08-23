@@ -77,7 +77,7 @@ exports.getAllEvents = async (req, res) => {
 
 exports.findCategory = async (req, res) => {
     try {
-      const evenements = await eventSchema.find({ category: req.params.category });
+      const evenements = await eventSchema.find({ category: req.params.category }).populate('soldTickets');
       res.status(200).json({msg:"events available for this category:",evenements});
     } catch (err) {
       res.status(500).json({ message: err.message });

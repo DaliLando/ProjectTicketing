@@ -16,7 +16,7 @@ const EventList = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get(`/event/category/${category}`);
+        const response = await axios.get(process.env.REACT_APP_URI+`/event/category/${category}`);
         
         dispatch(setEvents(response.data.evenements))
       } catch (err) {

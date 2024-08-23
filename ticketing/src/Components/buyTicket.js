@@ -2,8 +2,10 @@ import React, { useState } from 'react'
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { createTicket } from '../API/ticketAPI';
+import { toast } from 'react-toastify';
 
-const BuyTicket = ({show, handleClose,id,event}) => {
+
+const BuyTicket = ({show, handleClose,id,event,setTicketCount}) => {
   const [value,setValue]= useState({
     valeur:"",
     valid:true
@@ -17,14 +19,16 @@ const BuyTicket = ({show, handleClose,id,event}) => {
   
  const handlePurchase = ()=> {
       createTicket(value, id)
-      .then((doc)=>{
-     console.log(doc);
-
+      .then(()=>{
+        toast.success("Ticket booked successfully")
       })
       .catch((err)=>{
         console.log(err);
         
       })
+
+      setTicketCount((initialCount)=> initialCount+1)
+
       handleClose()
  }       
 
@@ -43,8 +47,8 @@ const BuyTicket = ({show, handleClose,id,event}) => {
         <br/>
          {
          event.ticketsAvailable.map((item,index)=> {
-           return <div>
-              <input type='radio' name='valeur' value={item.catType} onChange={handelChange}/> {`${item.catType} (${item.price} $)`}
+           return <div key={index}>
+              <input type='radio' name='valeur' value={item.catType} onChange={handelChange}/> {`${item.catType} (${item.price} TND)`}
            </div>
             
              

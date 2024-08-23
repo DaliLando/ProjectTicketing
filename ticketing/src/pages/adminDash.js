@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { getAllEvents } from '../API/eventApi';
 import { Alert, Button, Spinner } from 'react-bootstrap';
 import EventCard from '../Components/card';
@@ -8,45 +8,48 @@ import { setEvents } from '../app/eventSlice';
 
 const AdminDash = () => {
 
-  // const [events,setEvents]= useState([]);
-
-  const {event} = useSelector((state)=>state.Event)
+  const { event } = useSelector((state) => state.Event);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [show, setShow] = useState(false);
   const dispatch = useDispatch();
 
-  
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  useEffect(()=>{
+
+  useEffect(() => {
     getAllEvents()
-    .then((doc)=> {
-      dispatch(setEvents(doc))
-      setLoading(false)
-    })
-    .catch((err)=> {
-      setError(err)
-      
-    })
-  },[])
+      .then((doc) => {
+        dispatch(setEvents(doc));
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.response.data.msg);
+        setLoading(false)
+      });
+  }, [dispatch]);
 
   if (loading) return <Spinner animation="border" />;
   if (error) return <Alert variant="danger">{error}</Alert>;
+
   return (
     <div>
-    <div style={{display:"flex",flexWrap:"wrap",justifyContent:"space-around"}}>
-      {event.map((item,index)=>{
-        return <EventCard event={item} key={index}/>
-      })}
-    </div>
-      <Button variant="primary" onClick={handleShow}>
-        Create New Event
-      </Button>  
+          <h1 style={{textAlign:"center", marginTop:"30px"}}> Manage Events : </h1>
+      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-around" }}>
+        {event.map((item, index) => {
+          return <EventCard event={item} key={index} />;
+        })}
+      </div>
 
-      {show && <NewEvent show={show} handleClose={handleClose}/>}
-    </div>
-  )
-}
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+        <Button variant="primary" onClick={handleShow}>
+          Create New Event
+        </Button>
+      </div>
 
-export default AdminDash
+      {show && <NewEvent show={show} handleClose={handleClose} />}
+    </div>
+  );
+};
+
+export default AdminDash;

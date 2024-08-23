@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { signUp } from '../API/authAPI';
-import { Form, Button, Container, Row, Col, Card } from 'react-bootstrap';
+import { Form, Button, Container, Row, Col, Card, Spinner } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';  // Import useNavigate
 
 const Register = () => {
   const [user, setUser] = useState({
@@ -9,6 +10,8 @@ const Register = () => {
     email: '',
     password: ''
   });
+  const [loading, setLoading] = useState(false); // New loading state
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
@@ -16,17 +19,22 @@ const Register = () => {
 
   const handleClick = (e) => {
     e.preventDefault();
+    setLoading(true); // Start loading
     signUp(user)
       .then((doc) => {
         console.log(doc);
+        navigate('/login'); // Redirect to login page after successful registration
       })
       .catch((err) => {
         console.error(err);
+      })
+      .finally(() => {
+        setLoading(false); // Stop loading
       });
   };
 
   return (
-    <Container>
+    <Container >
       <Row className="justify-content-md-center mt-5">
         <Col md="6">
           <Card>
@@ -40,6 +48,7 @@ const Register = () => {
                     placeholder="Enter first name"
                     name="firstName"
                     onChange={handleChange}
+                    disabled={loading} // Disable input when loading
                   />
                 </Form.Group>
 
@@ -50,6 +59,7 @@ const Register = () => {
                     placeholder="Enter last name"
                     name="lastName"
                     onChange={handleChange}
+                    disabled={loading} // Disable input when loading
                   />
                 </Form.Group>
 
@@ -60,6 +70,7 @@ const Register = () => {
                     placeholder="Enter email"
                     name="email"
                     onChange={handleChange}
+                    disabled={loading} // Disable input when loading
                   />
                 </Form.Group>
 
@@ -70,10 +81,21 @@ const Register = () => {
                     placeholder="Password"
                     name="password"
                     onChange={handleChange}
+                    disabled={loading} // Disable input when loading
                   />
                 </Form.Group>
-                <Button variant="primary" type="submit" onClick={handleClick}>
-                  Register
+
+                <Button
+                  variant="primary"
+                  type="submit"
+                  onClick={handleClick}
+                  disabled={loading} // Disable button when loading
+                >
+                  {loading ? (
+                    <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                  ) : (
+                    'Register'
+                  )}
                 </Button>
               </Form>
             </Card.Body>

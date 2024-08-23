@@ -6,9 +6,15 @@ import { useNavigate } from 'react-router-dom';
 const Home = () => {
   const navigate = useNavigate();
   return (
-    <Container
+    <div>
+      <div style={{textAlign:"center",marginTop:"50px"}}>
+        <h1> Kassitech? kossli maaak</h1>
+        <p> Welcome to your first destination for event booking !</p>
+      </div>
+<Container
       style={{
-        height: '100vh',
+        // height: '100vh',
+        marginTop: "60px",
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
@@ -119,6 +125,8 @@ const Home = () => {
         </Col>
       </Row>
     </Container>
+    </div>
+    
   );
 };
 

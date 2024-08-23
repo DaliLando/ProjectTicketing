@@ -44,7 +44,9 @@ exports.login = async (req,res)=> {
     if (!doesExist) {
         return res.status(400).json ({msg:"this email does not exist"})
     }
-
+     if (doesExist.isBlocked === true) {
+        return res.status(400).json({msg:"your account is suspended"})
+     }
    let checked = bcrypt.compareSync(password,doesExist.password) ;
 
    if(!checked){

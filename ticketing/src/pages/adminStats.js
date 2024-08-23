@@ -39,7 +39,7 @@ const AdminStats = () => {
   return (
     
     <div>
-      <div style={{textAlign:"center", color:"white",margin:"40px"}}>
+      <div style={{textAlign:"center",margin:"40px"}}>
         <h2>      Tickets Sold and Tickets remaining for all events
         </h2>
       </div>

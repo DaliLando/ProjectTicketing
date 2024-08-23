@@ -1,90 +1,187 @@
-import React, { useEffect, useState } from 'react'
-import { getTicket } from '../API/ticketAPI';
-import { Alert, Button, Card, Spinner } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
-import QRCode from "react-qr-code";
-
+import React, { useState, useEffect } from 'react';
+import { Form, Button, Container, Row, Col, Card, Modal, Alert } from 'react-bootstrap';
+import { getUserProfile, updateUserProfile, changeUserPassword } from '../API/userApi';
 
 const UserProfile = () => {
-    
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [tickets,setTickets] = useState([]);
-    
-    console.log(tickets);
-    const navigate = useNavigate();
-    const handleShow = (id) =>{
-        
-        // console.log(id);
-        navigate(`/cancel/${id}`)
+  const [user, setUser] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+  });
 
-         
-    } 
+  const [passwordData, setPasswordData] = useState({
+    oldpswd: '',
+    password: '',
+    confirmPassword: ''
+  });
 
+  const [showModal, setShowModal] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
 
-    useEffect(()=>{
-        getTicket()
-        .then((doc)=> {
-          setTickets(doc.tickets);
-          
-          setLoading(false)
-        })
-        .catch((err)=> {
-          console.log(err);
-          
-          setError(err)
-          
-        })
-      },[])
+  useEffect(() => {
+    getUserProfile()
+    .then((data) => {
+      console.log("Fetched user profile data:", data); // Log the data for debugging
+      
+      if (data.user) { // Check if data contains the user object
+        setUser({
+          firstName: data.user.firstName || '',
+          lastName: data.user.lastName || '',
+          email: data.user.email || '',
+        });
+      } else {
+        console.error("User data not found");
+      }
+    })
+    .catch((err) => {
+      console.error("Error fetching user profile:", err);
+    });
+}, []);
 
-     
-    if (loading) return <Spinner animation="border" />;
-  if (error) return <Alert variant="danger">{error}</Alert>;
+  const handleChange = (e) => {
+    setUser({ ...user, [e.target.name]: e.target.value });
+  };
+
+  const handlePasswordChange = (e) => {
+    setPasswordData({ ...passwordData, [e.target.name]: e.target.value });
+  };
+
+  const handleUpdateProfile = (e) => {
+    e.preventDefault();
+    updateUserProfile(user)
+      .then(() => {
+        localStorage.setItem('user',JSON.stringify(user))
+
+        setSuccess('Profile updated successfully!');
+        setError(null);
+      })
+      .catch(() => {
+        setError('Failed to update profile.');
+        setSuccess(null);
+      });
+  };
+
+  const handlePasswordSubmit = (e) => {
+    e.preventDefault();
+    changeUserPassword(passwordData)
+      .then(() => {
+        setSuccess('Password changed successfully!');
+        setError(null);
+        setShowModal(false);
+        setPasswordData({ oldpswd: '', password: '', confirmPassword: '' });
+      })
+      .catch((err) => {
+        setError(err.response?.data?.msg || 'Failed to change password.');
+        setSuccess(null);
+      });
+  };
+
   return (
-    <div style={{display:"flex",flexWrap:"wrap",justifyContent:"space-evenly"}}>
-     {tickets.map((item,index)=> {
-        let prix = item.event.ticketsAvailable.find((el)=>el.catType === item?.seatType)
-         let qrValue ={
-          ID: item._id ,
-          user : item.user.email,
-          event: item.event.name,
-          seat : item?.seatType,
-          date:item.event.date,
-          location:item.event.location
-         }
-        
-        return <div style={{margin:"30px"}}>
-        
-        <Card key={index} style={{width:'300px',}}>
-            <Card.Header>{item.event.name}</Card.Header>
-            <div style={{ background: 'white', padding: '16px' }}>
-  <QRCode value={JSON.stringify(qrValue)}/>
-</div>
-        <Card.Body>
-        
-        
-        <Card.Subtitle className="mb-2 text-muted"> Date : {item.event.date.split('').splice(0,10)}</Card.Subtitle>
-        <Card.Subtitle className="mb-2 text-muted"> Location : {item.event.location}</Card.Subtitle>
-        <Card.Subtitle className="mb-2 text-muted"> Date : {item.event.date.split('').splice(0,10)}</Card.Subtitle>
-        <Card.Subtitle className="mb-2 text-muted"> Seats :{item?.seatType} </Card.Subtitle>
-        <Card.Subtitle className="mb-2 text-muted"> Price :{prix?.price} </Card.Subtitle>
+    <div>
+ <h1 style={{textAlign:"center", marginTop:"30px"}}> Edit your profile </h1>  
+   <Container>
+      <Row className="justify-content-md-center mt-5">
+        <Col md="6">
+          <Card>
+            <Card.Body>
+              <Card.Title className="text-center">Profile</Card.Title>
+              {error && <Alert variant="danger">{error}</Alert>}
+              {success && <Alert variant="success">{success}</Alert>}
+              <Form onSubmit={handleUpdateProfile}>
+                <Form.Group className="mb-3" controlId="formFirstName">
+                  <Form.Label>First Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter first name"
+                    name="firstName"
+                    value={user.firstName}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
 
-       
-      </Card.Body>
-      {item.isBooked ? <Card.Footer style={{display:"flex" , justifyContent:"space-around"}}>
-        <Button variant="primary">Print</Button>
-        <Button variant="danger" onClick={()=>handleShow(item._id)}>Cancel</Button>
-      </Card.Footer> : <Card.Footer  style={{color:'red'}}>Ticket is canceled</Card.Footer> } 
-      </Card>
+                <Form.Group className="mb-3" controlId="formLastName">
+                  <Form.Label>Last Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter last name"
+                    name="lastName"
+                    value={user.lastName}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
 
-      
-      
-      </div>
+                <Form.Group className="mb-3" controlId="formEmail">
+                  <Form.Label>Email address</Form.Label>
+                  <Form.Control
+                    type="email"
+                    placeholder="Enter email"
+                    name="email"
+                    value={user.email}
+                    disabled
+                  />
+                </Form.Group>
 
-     })}
-    
+                <Button variant="primary" type="submit">
+                  Update Profile
+                </Button>
+              </Form>
+
+              <Button variant="link" className="mt-3" onClick={() => setShowModal(true)}>
+                Change Password
+              </Button>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+
+      {/* Password Modal */}
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Change Password</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {error && <Alert variant="danger">{error}</Alert>}
+          <Form onSubmit={handlePasswordSubmit}>
+            <Form.Group className="mb-3" controlId="formOldPassword">
+              <Form.Label>Old Password</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Enter old password"
+                name="oldpswd"
+                value={passwordData.oldpswd}
+                onChange={handlePasswordChange}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="formNewPassword">
+              <Form.Label>New Password</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Enter new password"
+                name="password"
+                value={passwordData.password}
+                onChange={handlePasswordChange}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="formConfirmPassword">
+              <Form.Label>Confirm New Password</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Confirm new password"
+                name="confirmPassword"
+                value={passwordData.confirmPassword}
+                onChange={handlePasswordChange}
+              />
+            </Form.Group>
+            <Button variant="primary" type="submit">
+              Update Password
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
+    </Container>
     </div>
-  )
-}
+  );
+};
 
-export default UserProfile
+export default UserProfile;

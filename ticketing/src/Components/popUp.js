@@ -12,7 +12,7 @@ const PopUp = () => {
   const {id} = useParams();
   const handleClose =()=>{
     setShow(false);
-    navigate("/profile")
+    navigate("/tickets")
   }
 
 const [valeur,setValeur]= useState("")
@@ -32,7 +32,6 @@ setValeur(doc.seatType);
   const wrapperClick = ()=> {
     cancelTicket({isBooked :isBooked ,valeur : valeur} ,id)
     .then((doc)=>{
-        console.log(doc) 
         handleClose ()  
     })
     .catch((err)=>{
@@ -46,9 +45,9 @@ setValeur(doc.seatType);
     <div>
         <Modal show={true} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
+          <Modal.Title>Cancel Ticket Purchase</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Woohoo, you are reading this text in a modal!</Modal.Body>
+        <Modal.Body> Are you sure want to cancel this ticket ?</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Close
